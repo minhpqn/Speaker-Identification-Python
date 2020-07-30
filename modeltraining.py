@@ -1,7 +1,7 @@
 import cPickle
 import numpy as np
 from scipy.io.wavfile import read
-from sklearn.mixture import GMM 
+from sklearn.mixture import GaussianMixture as GMM
 from featureextraction import extract_features
 #from speakerfeatures import extract_features
 import warnings
@@ -16,7 +16,7 @@ source   = "trainingData/"
 # dest = "speaker_models/"
 # train_file = "development_set_enroll.txt"
 
-dest = "Speakers_models/"
+dest = "speakers_models/"
 train_file = "trainingDataPath.txt"        
 file_paths = open(train_file,'r')
 
@@ -39,14 +39,14 @@ for path in file_paths:
         features = np.vstack((features, vector))
     # when features of 5 files of speaker are concatenated, then do model training
 	# -> if count == 5: --> edited below
-    if count == 15:    
-        gmm = GMM(n_components = 16, n_iter = 200, covariance_type='diag',n_init = 3)
+    if count == 1:
+        gmm = GMM(n_components = 16, max_iter=200, covariance_type='diag',n_init = 3)
         gmm.fit(features)
         
         # dumping the trained gaussian model
         picklefile = path.split("-")[0]+".gmm"
         cPickle.dump(gmm,open(dest + picklefile,'w'))
-        print '+ modeling completed for speaker:',picklefile," with data point = ",features.shape    
+        print '+ modeling completed for speaker:',picklefile," with data point = ",features.shape
         features = np.asarray(())
         count = 0
     count = count + 1
